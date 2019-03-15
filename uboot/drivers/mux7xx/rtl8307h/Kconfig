@@ -1,0 +1,7 @@
+menu "M500774 init support"
+
+config M500774
+	bool "enable m500774 support function"
+
+
+endmenu

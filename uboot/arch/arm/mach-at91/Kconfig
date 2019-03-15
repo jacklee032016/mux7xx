@@ -1,0 +1,34 @@
+if ARCH_AT91
+
+choice
+	prompt "Atmel AT91 board select"
+	optional
+
+
+config TARGET_SAMA5D2_XPLAINED
+	bool "SAMA5D2 Xplained board"
+	select CPU_V7
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+
+# this used in board/atmel/muxlab7xx, then that defines BOARD and CONFIG_NAME to create include/config.h
+# Jack Lee
+config TARGET_MUXLAB_7XX
+	bool "MuxLab 7xx board"
+	select CPU_V7
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+
+#	select SUPPORT_SPL
+
+
+endchoice
+
+config SYS_SOC
+	default "at91"
+
+source "board/atmel/sama5d2_xplained/Kconfig"
+source "board/atmel/muxlab7xx/Kconfig"
+
+endif
