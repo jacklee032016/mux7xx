@@ -566,8 +566,10 @@ static int macb_phy_init(struct macb_device *macb, const char *name)
 		 ? 1 : 0);
 	duplex = (media & ADVERTISE_FULL) ? 1 : 0;
 
+#if 1
 speed=1;
 duplex=1;
+#endif
 
 	printf("%s: link up, %sMbps %s-duplex (lpa: 0x%04x)\n",
 	       name,

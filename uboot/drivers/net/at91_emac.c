@@ -43,19 +43,20 @@
 	#define HCLK_DIV	AT91_EMAC_CFG_MCLK_8
 #endif
 
-#ifdef ET_DEBUG
+#if 1//def ET_DEBUG
 #define DEBUG_AT91EMAC	1
 #else
 #define DEBUG_AT91EMAC	0
 #endif
 
-#ifdef MII_DEBUG
+
+#if 1//def MII_DEBUG
 #define DEBUG_AT91PHY	1
 #else
 #define DEBUG_AT91PHY	0
 #endif
 
-#ifndef CONFIG_DRIVER_AT91EMAC_QUIET
+#if 1//ndef CONFIG_DRIVER_AT91EMAC_QUIET
 #define VERBOSEP	1
 #else
 #define VERBOSEP	0

@@ -216,7 +216,9 @@ rtk_port_link_ability_t		heac1;
 #endif
 	
 #if 1
-//i	select_i2c_ch_pca(3);
+	/* 768 */
+//	select_i2c_ch_pca(3);
+	/* 774 */
 	select_i2c_ch_pca(2);
 
 	RTL8307H_I2C_init(); 
