@@ -1,8 +1,8 @@
 # rule for every directory
 
 # support PC environments
-# ARCH=X86
-ARCH=arm
+ARCH=X86
+# ARCH=arm
 
 ifeq ($(ARCH),X86)
 else
@@ -22,13 +22,14 @@ ifeq ($(ARCH),arm)
 	C_FLAGS += -D__ARM_CMN__=1 -DARCH_ARM=1  -DARCH_X86=0 -DARCH_X86_32=0 
 	CXXFLAGS = -D__ARM_CMN__=1 -DARCH_ARM=1  -DARCH_X86=0 -DARCH_X86_32=0 
 	CROSS_COMPILER=$(BUILD_ROOT_HOME)/output/host/bin/arm-linux-
+#	CROSS_COMPILER=$(BUILD_ROOT_HOME)/output/host/bin/arm-buildroot-linux-uclibcgnueabihf-
 	LDFLAGS+=  
 	flag=
 	C_FLAGS +=-DARM
 	
 else
 	ARCH=X86
-	C_FLAGS +=-D$(ARCH) -DARCH_X86=1 -DARCH_X86_32=1 -DARCH_ARM=0 
+	C_FLAGS +=-D$(ARCH) -DARCH_X86=1 -DARCH_X86_32=1 -DARCH_ARM=0 -fPIC 
 	EXTENSION=
 endif
 
@@ -64,7 +65,6 @@ OBJ_DIR=Linux.obj.$(ARCH)
 CGI_BIN_DIR=$(BIN_DIR)/var/admin/cgi-bin
 
 
-FFMPEG_HOME := $(ROOT_DIR)/../ffmpeg
 SHARED_HOME := $(ROOT_DIR)/shared
 
 
@@ -76,7 +76,7 @@ CC_CFLAGS+= -Wno-deprecated
 
 CFLAGS += -DROOT_DIR='"$(ROOT_DIR)"' -I$(ROOT_DIR) $(INCLUDE_DIR) -I. -I./ 
 
-SHARED_CFLAGS += -I$(SHARED_HOME)/include
+SHARED_CFLAGS += -I$(SHARED_HOME)/include -I$(SHARED_HOME)/src/sys/include
 SHARED_LDFLAGS += -L$(SHARED_HOME)/Linux.bin.$(ARCH)/lib -lMux -lShared
 
 #

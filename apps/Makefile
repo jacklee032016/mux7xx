@@ -3,7 +3,7 @@
 # released or debug version, different on debug and log info£¬2007.03.15
 # must be 'release' or 'debug'
 EDITION=debug
-EDITION=release
+# EDITION=release
 
 PLUGINS:=NO
 
@@ -41,10 +41,12 @@ export RELEASES_NAME
 
 include $(RULE_DIR)/Rules.mak
 
-# SHARED_DIRS += shared/src/common
+	SHARED_DIRS += shared/src/common
 # SHARED_DIRS += shared/src/media
-# SHARED_DIRS += shared/src/mux
-# SHARED_DIRS += shared/programs/api
+	SHARED_DIRS += shared/src/mux
+	SHARED_DIRS += shared/src/sys
+
+	SHARED_DIRS += shared/programs/api
 
 	WEB_ADMIN_DIRS += cgi/lib
 	WEB_ADMIN_DIRS += cgi/modules/navigate
@@ -64,7 +66,12 @@ endif
 	
 
 	SUBDIRS += src
+	SUBDIRS += libfcgi
+	SUBDIRS += fcgi
 
+# modules for apache
+	# SUBDIRS += modFcgi
+	# SUBDIRS += fcgid
 
 
 ifeq ($(ARCH),arm)

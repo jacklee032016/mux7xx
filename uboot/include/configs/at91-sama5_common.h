@@ -94,16 +94,32 @@
 #define CONFIG_ENV_OFFSET		0x10000
 #define CONFIG_ENV_SIZE			0x10000
 #define CONFIG_ENV_SECT_SIZE		0x1000
+
+#define	WITH_RAMDISK_SUPPORT			0		/* JL. 03.19, 2019 */
+
+#if WITH_RAMDISK_SUPPORT
 #define CONFIG_BOOTCOMMAND		"sf probe 0; "				\
 					"sf read 0x22000000 0xB0000 0x400000; "	\
 					"sf read 0x25000000 0x4D0000 0x1400000; "	\
 					"sf read 0x21000000 0xA0000 0x10000; "	\
 					"bootz 0x22000000 - 0x21000000"
+#else
+#define CONFIG_BOOTCOMMAND		"sf probe 0; "				\
+					"sf read 0x22000000 0xB0000 0x400000; "	\
+					"sf read 0x21000000 0xA0000 0x10000; "	\
+					"bootz 0x22000000 - 0x21000000"
+#endif
+
 #undef CONFIG_BOOTARGS
 /*#define CONFIG_BOOTARGS		"console=ttyS0,115200 ip=10.0.1.233 earlyprintk " \
 				"root=/dev/mtdblock5 rootfstype=jffs2 rw rootwait" */
+#if WITH_RAMDISK_SUPPORT				
 #define CONFIG_BOOTARGS		"initrd=0x25000000,40M root=/dev/ram0 rw init=/linuxrc " \
         "console=ttyS0,115200" 
+#else
+#define CONFIG_BOOTARGS		"root=/dev/mtdblock7 rootfstype=jffs2 rw init=/linuxrc console=ttyS0,115200" 
+#endif
+
 /*        
 #define CONFIG_IPADDR 10.0.1.230
 #define CONFIG_NETMASK 255.255.255.0

@@ -33,6 +33,8 @@
 #define		MUX_DEV_EXP_RESET	DEV_HOME"/exprst"
 #define		MUX_DEV_HDMI_RESET	DEV_HOME"/hdmirst"	/* no in 774 */
 
+#define		MUX_DEV_I2C_0			DEV_HOME"/i2c-0"
+#define		MUX_DEV_I2C_1			DEV_HOME"/i2c-1"
 
 #define		SET_LED_BLINK(muxMain)		((muxMain)->ledCtrl.ledMode = LED_MODE_BLINK)
 

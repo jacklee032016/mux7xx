@@ -52,6 +52,11 @@ const uchar default_environment[] = {
 #ifdef	CONFIG_ETHPRIME
 	"ethprime="	CONFIG_ETHPRIME			"\0"
 #endif
+
+#if	1
+	"ethaddr="	"fc:c2:3d:0d:16:13"	"\0"
+#endif
+
 #ifdef	CONFIG_IPADDR
 	"ipaddr="	__stringify(CONFIG_IPADDR)	"\0"
 #endif

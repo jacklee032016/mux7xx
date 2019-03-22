@@ -28,7 +28,7 @@ SRC += \
 			muxMain.c		\
 
 
-LOCAL_ALL=muxMedia 
+LOCAL_ALL=muxController 
 
 include $(ROOT_DIR)/Makefile.post
 
@@ -45,5 +45,5 @@ LIBS += -lm -lpthread -lrt -ldl
 
 # -Wl,-verbose -Wl,-static  -s 
 $(LOCAL_ALL):$(OBJS)
-		$(CC) -s -o $@ $(OBJS) -L$(ROOT_DIR)/Linux.bin.$(ARCH)/lib -lz -L$(HI_SHARED_LIB_DIR) -L$(HI_EXTERN_LIB_DIR) $(LIB_LDFLAGS) -lMux $(SHARED_LDFLAGS) $(LIBS) 
+		$(CC) -s -o $@ $(OBJS) -L$(ROOT_DIR)/Linux.bin.$(ARCH)/lib -lz -L$(HI_SHARED_LIB_DIR) -L$(HI_EXTERN_LIB_DIR) $(LIB_LDFLAGS) -lMux -lCmnSys $(SHARED_LDFLAGS) $(LIBS) 
 		$(MOVE) $@ $(BIN_DIR)/sbin

@@ -3,7 +3,6 @@
 # Jack Lee
 #
 
-SAMPLE_NAME="g05.mov"
 
 DATDIR=`echo $1 | sed 's/\/\//\//g'`
 PKGDIR="$DATDIR/../pkg"
@@ -22,7 +21,8 @@ SRCDIR=`echo $2 | sed 's/\/\//\//g'`
 	mkdir -p $PKGDIR/lib
 	mkdir -p $PKGDIR/etc/mLab
 	mkdir -p $PKGDIR/etc/sys
-	mkdir -p $PKGDIR/var/admin/cgi-bin
+	mkdir -p $PKGDIR/var/www/apis
+	mkdir -p $PKGDIR/var/www/cgi-bin
 
 CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf 
 		muxServer.conf muxWeb.conf 
@@ -71,22 +71,24 @@ CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf
 			cp $VERBOSE $p $PKGDIR/sbin
 	done
 
-	echo ""
-	echo "   Copy Sample Video into $PKGDIR..."
-	EXES="$SRCDIR/media/$SAMPLE_NAME"
-	for p in $EXES; do
-			f=`basename $p`
-			echo "                  $f is copied..."
-			cp $VERBOSE $p $PKGDIR/
-	done
 
 	echo ""
 #	echo "   Copy CGI into $PKGDIR..."
-	EXES=`find $DATDIR/var/admin/cgi-bin/ -type f `
+	EXES=`find $DATDIR/var/www/apis/ -type f `
 	for p in $EXES; do
 			f=`basename $p`
 			echo "                  $f is copied..."
-			cp $VERBOSE $p $PKGDIR/var/admin/cgi-bin/
+			cp $VERBOSE $p $PKGDIR/var/www/apis/
+	done
+
+	
+		echo ""
+#	echo "   Copy CGI into $PKGDIR..."
+	EXES=`find $DATDIR/var/www/cgi-bin/ -type f `
+	for p in $EXES; do
+			f=`basename $p`
+			echo "                  $f is copied..."
+			cp $VERBOSE $p $PKGDIR/var/www/cgi-bin/
 	done
 
 
@@ -100,7 +102,7 @@ CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf
 	cd $PKGDIR
 #	tar czf $RELEASES_NAME *
 	echo "zip $RELEASES_NAME *"
-	zip -r $RELEASES_NAME etc lib sbin usr $SAMPLE_NAME
+	zip -r $RELEASES_NAME etc lib sbin usr var
 	mv $RELEASES_NAME $ROOT_DIR
 
 cat << EOF

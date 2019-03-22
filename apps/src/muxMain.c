@@ -28,6 +28,8 @@
 #include "libMedia.h"
 #include "libMux.h"
 
+#include "libCmnSys.h"
+
 #include "ms_version.h"
 
 static	MuxMain		_muxMain;
@@ -308,6 +310,14 @@ int main(int argc, char **argv)
 		printf("%s Log Init Failed.\n", muxMain->muxLog.name );
 		return 0;
 	}
+
+	{
+		char ip[24];
+TRACE();
+		getLocalIp("eth0", ip);
+		getNetmask("eth0", ip);
+	}
+
 
 #if 0
 	if( cmnMuxDsValidate() )
