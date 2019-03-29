@@ -12,10 +12,6 @@
 #include "ms_version.h"
 
 
-#define	MUX_INVALIDATE_CHAR			0xFF
-#define	MUX_INVALIDATE_SHORT			0xFFFF
-#define	MUX_INVALIDATE_INTEGER		0xFFFFFFFF
-
 
 #define	MUX_MAIN_CONFIG_FILE				CONFIG_FILE_HOME_PROJECT"muxMain.conf"
 
@@ -35,6 +31,10 @@
 #define	MUX_WEB_CONFIG_FILE 				CONFIG_FILE_HOME_PROJECT"muxWeb.conf" /* locate me in the server root */
 #endif
 #endif
+
+
+#define	MUX_SYSTEM_CONFIG_FILE			CONFIG_FILE_HOME_PROJECT"muxSystem.json"
+
 
 #define	IP_COMMAND_CONFIG_FILE			CONFIG_FILE_HOME_PROJECT"ipCmds.json"
 
@@ -806,71 +806,8 @@ typedef	struct	_CmnMuxWebConfig
 }CmnMuxWebConfig;
 
 
-typedef	enum
-{
-	LED_MODE_OFF	 	=	0,
-	LED_MODE_ON		=	1,
-	LED_MODE_BLINK	= 2
-}LED_MODE_T;
 
-typedef	struct _LedCtrl
-{
-	int					fd;
-	LED_MODE_T			ledMode;
-}HwLedCtrl;
-
-typedef	struct _ButtonCtrl
-{
-	int					fd;
-}HwButtonCtrl;
-
-typedef	struct _WatchdogCtrl
-{
-	int				fd;
-	int				timeout;
-}HwWatchdogCtrl;
-
-
-typedef	enum _RS232_BAUDRATE
-{
-	RS232_BR_300 = 300,
-	RS232_BR_600 = 600,
-	RS232_BR_1200 =  1200,
-	RS232_BR_2400 = 2400,
-	RS232_BR_4800 =  4800,
-	RS232_BR_9600 =  9600,
-	RS232_BR_19200 = 19200,
-	RS232_BR_38400 =  38400,
-	RS232_BR_57600 = 57600,
-	RS232_BR_115200 =  115200,
-	RS232_BR_INVALIDATE = MUX_INVALIDATE_INTEGER
-}RS232_BAUDRATE;
-
-typedef enum _RS232_DATABITS
-{
-	RS232_DB_5 =  5,
-	RS232_DB_6 =  6,
-	RS232_DB_7 = 7,
-	RS232_DB_8 = 8,
-	RS232_DB_INVALIDATE = MUX_INVALIDATE_INTEGER
-}RS232_DATABITS;
-
-typedef enum _RS232_STOPBITS
-{
-	RS232_SB_1 = 1,
-	RS232_SB_2 = 2,
-	RS232_SB_INVALIDATE = MUX_INVALIDATE_INTEGER
-}RS232_STOPBITS;
-
-typedef	struct _Rs232Ctrl
-{
-	int					fd;
-
-	RS232_BAUDRATE		baud;
-	RS232_DATABITS		databits;
-	RS232_STOPBITS		stopbits;
-	char					parity;
-}HwRs232Ctrl;
+#include "mux7xx.h"
 
 
 typedef	struct _MuxMain
@@ -899,6 +836,8 @@ typedef	struct _MuxMain
 	HwWatchdogCtrl			watchdogCtrl;
 	HwRs232Ctrl				rs232Ctrl;
 
+	EXT_RUNTIME_CFG			runCfg;
+
 	/*** data structure of run-time      *******/
 	MEDIA_FILE_LIST_T		*mediaFiles;		/* data sructure for scan directory */
 
@@ -921,6 +860,7 @@ typedef	struct _MuxMain
 
 	MuxMediaCapture			*mediaCaptures;	/* Capture of PLAYER or Capture of FILE registered here */
 }MuxMain;
+
 
 
 /************ Macros like functions **********************/

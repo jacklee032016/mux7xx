@@ -7,7 +7,7 @@ include $(RULE_DIR)/Makefile.pre
 
 
 CODE_SUBDIRS += \
-			.
+			sys
 		
 
 CFLAGS += $(SHARED_CFLAGS) 
@@ -24,8 +24,14 @@ else
 
 endif
 
+SYS_SRC += \
+		sys/extSysConfig.c \
+		sys/extSysInit.c \
+
+		
 SRC += \
-			muxMain.c		\
+		$(SYS_SRC) \
+		muxMain.c		\
 
 
 LOCAL_ALL=muxController 

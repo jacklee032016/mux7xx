@@ -2,35 +2,10 @@
 * $Id$
 */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/time.h>
-#include <termios.h>
-#include <sys/resource.h>
-#include <signal.h>
-
-#include <stdarg.h>
-#include <sys/poll.h>
-#include <errno.h>
-#include <sys/time.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
-#include <dlfcn.h>
-
-#include "libCmn.h"
-#include "libMedia.h"
-#include "libMux.h"
-
-#include "libCmnSys.h"
+#include "mux.h"
 
 #include "ms_version.h"
+
 
 static	MuxMain		_muxMain;
 
@@ -311,14 +286,10 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+	if(extSystemInit(muxMain) == EXIT_FAILURE)
 	{
-		char ip[24];
-TRACE();
-		getLocalIp("eth0", ip);
-		getNetmask("eth0", ip);
+		return 0;
 	}
-
-
 #if 0
 	if( cmnMuxDsValidate() )
 	{

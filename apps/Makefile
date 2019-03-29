@@ -63,12 +63,14 @@ ifeq ($(PLUGINS),YES)
 #	SUBDIRS += src/server
 #	SUBDIRS += src/web
 endif
+
+	CGI_SUBDIRS += libfcgi
+	CGI_SUBDIRS += fcgi
 	
 
 	SUBDIRS += src
-	SUBDIRS += libfcgi
-	SUBDIRS += fcgi
 
+	
 # modules for apache
 	# SUBDIRS += modFcgi
 	# SUBDIRS += fcgid

@@ -4,9 +4,17 @@
 
 int cmnSysI2cWrite(int deviceID, unsigned char offset, unsigned char *buffer, int length);
 int cmnSysI2cRead(int deviceID, unsigned char offset, unsigned char *buffer, int length);
-int getLocalIp(char * hw_name, char *ip);
-int getNetmask(char *hw_name, char *netmask);
 
+/* system network */
+uint32_t cmnSysNetGetIp(char * hwName);
+uint32_t cmnSysNetGetMask(char *hwName);
+
+uint32_t cmnSysNetGetDefaultGw(char *hwName);
+
+
+char *cmnSysNetAddress( uint32_t address);
+
+int cmnSysNetGetMacAddress(char *hwName, EXT_MAC_ADDRESS *mac);
 
 #endif
 

@@ -15,37 +15,6 @@
 #include <fcntl.h>
 #include "system_info.h"
 
-void GetGateWay(char * gateway)
-{
-	FILE *fp;
-	char buf[512];
-	char cmd[128];
-	char *tmp;
-
-	if (gateway == NULL)
-		return;
-
-	strcpy(cmd, "ip route");
-	fp = popen(cmd, "r");
-	if (NULL == fp)
-	{
-		printf("GetGateWay: popen error\n");
-		return;
-	}
-	while (fgets(buf, sizeof(buf), fp) != NULL)
-	{
-		tmp = buf;
-		while (*tmp && isspace(*tmp))
-			++tmp;
-		if (strncmp(tmp, "default", strlen("default")) == 0)
-			break;
-	}
-	sscanf(buf, "%*s%*s%s", gateway);
-	printf("default gateway:%s\n", gateway);
-	pclose(fp);
-
-}
-
 
 int readParamFromDrive(char * partitionName, char * param, int bufLens) 
 {

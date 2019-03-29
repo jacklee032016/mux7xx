@@ -119,30 +119,6 @@ int main(void)
 	}
 #endif		
 	
-	spi0_file = spi_init(SPI_0_FILENAME); //dev
-	if(spi0_file) {
-#ifdef SPI_TEST_ENABLE
-		spi_buf[0] = SPI_TST_D0;
-		spi_buf[1] = SPI_TST_D1;
-		Ret = spi_write(spi0_file, SPI_TST_ADDR, spi_buf, 2); //this will write value 0x41FF to the address 0xE60E
-		if(Ret == RES_SPI_SUCCESS) {
-			Ret = spi_read(spi0_file, SPI_TST_ADDR, spi_buf, 2); //reading the address 0xE60E
-			if(Ret == RES_SPI_SUCCESS) {
-				printf("SPI test: 0x%02X%02X vs 0x%02X%02X\n", spi_buf[0], spi_buf[1], SPI_TST_D0, SPI_TST_D1);	
-			}
-			else {
-				printf("SPI test error: can't read SPI.\n");		
-			}
-		}
-		else {
-			printf("SPI test error: can't write SPI.\n");		
-		}
-#endif 
-//		close(spi0_file);
-	}
-	else {
-		printf("SPI test error: can't init SPI.\n");		
-	}
 	
 	fpga_init();	
 	usleep(100000);	
