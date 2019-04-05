@@ -347,6 +347,13 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	res =  muxMain->initThread(muxMain, &threadBroker, muxMain);
+	if(res < 0)
+	{
+		MUX_ERROR("failed when '%s' initializing", threadBroker.name );
+		exit(1);
+	}
+
 	res =  muxMain->initThread(muxMain, &threadController, muxMain);
 	if(res < 0)
 	{

@@ -5,6 +5,18 @@
 #ifndef	___CMN_MUX_H__
 #define	___CMN_MUX_H__
 
+
+#define	CONN_IS_IPCMD(ctrlConn)	\
+		((ctrlConn)->type == CTRL_LINK_TCP || (ctrlConn)->type == CTRL_LINK_UDP )
+
+
+#define	DATA_CONN_IS_IPCMD(dataConn)	\
+		CONN_IS_IPCMD((dataConn)->ctrlConn )
+		
+
+int cmnMuxControllerAddEvent(char *cmd, 	int method, void *dataConn);
+
+
 int cmnMuxCtrlDataHandle( struct DATA_CONN *dataConn );
 
 cJSON *cmnMuxJsonLoadConfiguration(char *cfgFileName);

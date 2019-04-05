@@ -27,6 +27,7 @@ MUX_SRC += \
 		cmnMuxPlayerConfig.c	\
 		cmnMuxSaveConfig.c \
 		cmnMuxDs.c \
+		api/cmnMuxBroker.c \
 		api/cmnMuxController.c \
 		api/cmnMuxJson.c \
 		api/cmnMuxJsonMedia.c \

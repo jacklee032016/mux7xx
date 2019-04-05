@@ -75,6 +75,13 @@ struct CLIENT_CONN *cmnMuxClientConnCreate(CTRL_LINK_TYPE type, int port, char *
 		MUX_ERROR("Set socket SEND timeout error:%s", strerror(errno));
 	}
 
+	//char broadcast = '1';
+	int broadcast = 1;
+	if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast) ) < 0)
+	{
+		MUX_ERROR("Set socket BOARDCAST error:%s", strerror(errno));
+	}
+
 
 	if(type == CTRL_LINK_TCP || type == CTRL_LINK_UDP)
 	{
@@ -95,9 +102,17 @@ struct CLIENT_CONN *cmnMuxClientConnCreate(CTRL_LINK_TYPE type, int port, char *
 			memcpy(&addr.sin_addr, he->h_addr_list[0], sizeof(struct in_addr));
 		}
 
+		MUX_DEBUG("parse address %s", address);
+		MUX_DEBUG("into %s", address, cmnSysNetAddress((uint32_t)addr.sin_addr.s_addr));
+		MUX_DEBUG("parse address %s", address);
+
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(port);
+//		addr.sin_addr.s_addr = INADDR_BROADCAST;
+		
 		res = connect(sock, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
+
+		TRACE();
 	}
 	else
 	{/* unix socket */
@@ -516,6 +531,12 @@ cJSON *cmnMuxClientRequest( char *ipcmdName, char *actionName, cJSON *obj)
 	{
 		actionObj = findJSonObject(clientCtrl->playActions, MEDIA_CTRL_ACTION, actionName);
 	}	
+
+	else if(!strcasecmp( ipcmdName, IPCMD_NAME_GET_PARAM) )
+	{
+		actionObj = cJSON_CreateString(actionName ); //clientCtrl->playActions, MEDIA_CTRL_ACTION, actionName);
+	}	
+
 	else //if(!strcasecmp( ipcmdName, IPCMD_NAME_MEDIA_PLAY) )
 	{
 		actionObj = findJSonObject(clientCtrl->mediaActions, MEDIA_CTRL_ACTION, actionName);

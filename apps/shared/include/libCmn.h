@@ -35,7 +35,7 @@
 
 
 #define	MUX_OPTIONS_DEBUG_CAPTURE			0
-#define	MUX_OPTIONS_DEBUG_IP_COMMAND		0
+#define	MUX_OPTIONS_DEBUG_IP_COMMAND		1
 
 #define	DEBUG_FFMPEG							0
 
@@ -517,6 +517,12 @@ extern volatile int recvSigalTerminal;
 
 #define	SYSTEM_IS_EXITING() \
 		(recvSigalTerminal == TRUE)
+
+
+#define	MUX_DEBUG_JSON_OBJ(obj)	\
+	{ char *printedStr =cJSON_Print((obj));  MUX_DEBUG("JSON object %s :\n'%s'", #obj, printedStr);	\
+		free(printedStr);}
+
 
 
 #ifdef __cplusplus

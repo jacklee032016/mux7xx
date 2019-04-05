@@ -86,6 +86,11 @@
 #define	IPCMD_EDID_DEEP_COLOR				"color"
 
 
+#define	IPCMD_NAME_KEYWORD_TARG			"targ"
+#define	IPCMD_NAME_KEYWORD_CMD				"cmd"
+#define	IPCMD_NAME_KEYWORD_LOGIN_ACK		"login_ack"
+#define	IPCMD_NAME_KEYWORD_PWD_MSG		"pwd_msg"
+
 #define	IPCMD_NAME_KEYWORD_DATA			"data"
 
 #define	MEDIA_CTRL_ACTION						"action"
@@ -583,22 +588,35 @@ typedef	struct _ipcmd_agent
 #endif
 
 	void					*priv;	
-}CMN_MUX_CONTROLLER;
+}CMN_MUX_BROKER;
+
+struct	CTRL_CONN;
+struct	DATA_CONN;
+
+typedef	struct DATA_CONN* (*CreateDataConn)(struct CTRL_CONN *ctrlConn);//, void *priv);
+
+typedef	int (*DataConnReponse)(struct DATA_CONN *dataConn, void *buf, int size);
+
+typedef	void (*DataConnDestroy)(struct DATA_CONN *dataConn);
 
 
 /* Control connection for controller : wait for client's request (controller's command) */
 struct	CTRL_CONN
 {
-	int					port;
-	CTRL_LINK_TYPE		type;
+	int						port;
+	CTRL_LINK_TYPE			type;
 	
-	int					sockCtrl;
+	int						sockCtrl;
 
-	CMN_IP_COMMAND		cmdBuffer;
+	CMN_IP_COMMAND			*cmdBuffer;
+	unsigned char				buffer[2048];
+	int						length;
 
-	struct	CTRL_CONN	*next;
+	CreateDataConn			createData;
 
-	CMN_MUX_CONTROLLER *controller;
+	struct	CTRL_CONN		*next;
+
+	CMN_MUX_BROKER 		*broker;
 };
 
 
@@ -612,20 +630,39 @@ struct	DATA_CONN
 	struct sockaddr_in		peerAddr;	/* for UDP socket */
 	socklen_t				addrlen;
 
+	char					cmd[CMN_NAME_LENGTH];
+	int					method;		
 	cJSON				*cmdObjs;
 	cJSON				*dataObj;	/* refer to first item of DATA array in cmdObjs */
+	cJSON				*resultObject;
 	
 	int					errCode;
 	char					detailedMsg[CMN_NAME_LENGTH];
 	cmn_mutex_t			*mutexLock;  /* lock between controller and other threads (plugins, FTP) */
 
-
-	cJSON				*resultObject; /* should be a array object;* some commands, such as PlayerStatus, MediaInfo, MetaData, RecordStatus, need resultObject to replace the first item in objects array, eg. event->object */
-
 	int					isFinished;
+
+	DataConnReponse		response;
+	DataConnDestroy		destroy;
 
 	struct CTRL_CONN		*ctrlConn;
 };
+
+
+typedef	struct _CMN_JSON_EVENT
+{
+	int						event;
+	char						cmd[JSON_ACTION_LENGTH];
+	int						method;
+	
+	cJSON					*data;
+	cJSON					*resultObject;
+
+	int						status;	/* status of event process */
+	
+	struct DATA_CONN		*dataConn;
+	void 					*priv;
+}CMN_JSON_EVENT;
 
 
 
@@ -837,6 +874,8 @@ typedef	struct _MuxMain
 	HwRs232Ctrl				rs232Ctrl;
 
 	EXT_RUNTIME_CFG			runCfg;
+	cJSON					*systemJson;
+
 
 	/*** data structure of run-time      *******/
 	MEDIA_FILE_LIST_T		*mediaFiles;		/* data sructure for scan directory */
@@ -925,7 +964,7 @@ typedef	struct _MuxMain
 
 
 #define	SYS_MAIN(dataConn)		\
-			( (dataConn)->ctrlConn->controller->muxMain)
+			( (dataConn)->ctrlConn->broker->muxMain)
 
 
 /* free dataConn and its cJSON, and then free jsonEvent */
@@ -984,6 +1023,7 @@ int cmnMuxJsonReplyError( struct DATA_CONN *dataConn, const char *fmt, ... );
 cJSON *cmnMuxClientRequest( char *ipcmdName, char *actionName, cJSON *obj);
 cJSON *cmnMuxClientSendout(char *ipcmdName, cJSON *dataArray);
 
+extern	CmnThread  threadBroker;
 extern	CmnThread  threadController;
 extern	CmnThread  threadCmnFtp;
 
@@ -1041,6 +1081,10 @@ int cmnMuxJEventReply(CMN_PLAY_JSON_EVENT *jsonEvent, int errCode, const char *f
 		cmnMuxJsonControllerReply( (dataConn),  IPCMD_ERR_DATA_ERROR,  __VA_ARGS__ )
 
 int cmnMuxDsValidate(void);
+
+
+cJSON *cmnMuxSystemJSon2Flat(cJSON *systemJson);
+
 
 
 #endif

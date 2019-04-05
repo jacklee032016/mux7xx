@@ -18,41 +18,20 @@ send JSON request from json file and parse JSON response, used in CGI and other 
 
 static void usage(char* base, struct API_PARAMETERS *params)
 {
-#if 0
-	printf("%s: Command line interface for JSON API.\n"\
-		"\t\t%s -c command [-i windowIndex/osdIndex -m media -l left -t top -w width -h height -a ipaddress/fqdn -d duratoin " \
-		"-C background|fontColor|fontsize] -s ftpServer -u ftpUser -f ftpPassword -P ftpPath -p 0(UDP)|1(TCP)|2(UnixSys) -b port(3600)\n"\
-		"\t\t Current command: \n\t\t\tplay, stop, pause, resume, forward, backforwar, subtitle, " \
-		"\n\t\t\trecordStart, recordStop, recordStatus, "\
-		"\n\t\t\talert, logo, osdEnable, osdBackground, osdFontColor, osdFontSize, osdPosition, " \
-		"\n\t\t\tsawpWindow, rotateWindow, vol+, vol-, mute, quit, " \
-		"\n\t\t\tfiles, playlists, playlist, fileDelete, playlistDelete, download\n" \
-		"\t\t windowIndex: default is 0; media : URL/Local file/Playlist; \n" \
-		"\t\t ipaddress/fqdn: default localhost; -d duration: duration for recording; \n", 
-		  base, base);
-#else
 	printf("%s: \n\tCommand line interface for JSON API.\n"\
-		"\t%s-a ipaddress/fqdn -p 0(UDP)|1(TCP, default)|2(UnixSys) -b port(3600)  -c command -o options\n"\
+		"\t%s -a ipaddress/fqdn -p 0(UDP)|1(TCP, default)|2(UnixSys) -b port(3600)  -c command -o options\n"\
 		"\t\t Current command:  " \
-		"\n\t\t\tplay, stop, pause, resume, forward, backforwar, subtitle, playerInfo, mediaInfo, " \
-		"\n\t\t\tsawpWindow, rotateWindow, locateWindow, " IPCMD_NAME_ASPECT_WINDOW", vol+, vol-, "IPCMD_NAME_PLAYER_MUTE", "IPCMD_NAME_PLAYER_MUTE_ALL", "IPCMD_NAME_PLAYER_AUDIO", " \
-		"\n\t\t\talert, logo, osdEnable, osdBackground, osdTransparency, osdFontColor, osdFontSize, osdPosition, " IPCMD_NAME_OSD_INFO ", "\
-		"\n\t\t\trecordStart, recordStop, recordStatus, recordPause, recordResume, "\
-		"\n\t\t\tfiles, playlists, playlist, fileDelete, playlistDelete, playlistAdd, download," \
-		"\n\t\t\t"CLIENT_CMD_NAME_SVR_CONFIG", "CLIENT_CMD_NAME_SVR_FEEDS", "CLIENT_CMD_NAME_SVR_CONNS", "CLIENT_CMD_NAME_SVR_URLS", " \
-		"\n\t\t\t"CLIENT_CMD_NAME_WEB_INFO ", " \
-		"\n\t\t\t"IPCMD_CEC_STAND_BY ", " IPCMD_CEC_IMAGE_VIEW_ON", " IPCMD_CEC_VOLUME_UP ", " IPCMD_CEC_VOLUME_DOWN ", " IPCMD_CEC_MUTE ", " IPCMD_CEC_INFO ", " \
-		"\n\t\t\t"IPCMD_EDID_RESOLUTION ", " IPCMD_EDID_DEEP_COLOR", "  \
+		"\n\t\t\t"CLIENT_CMD_STR_FIND", "CLIENT_CMD_STR_GET", "CLIENT_CMD_STR_SET", "CLIENT_CMD_STR_RS_DATA", " \
+		"\n\t\t\t"CLIENT_CMD_STR_SECURE", " CLIENT_CMD_STR_BLINK", "
 		"\n\t\t\t"IPCMD_SYS_ADMIN_THREADS ", " IPCMD_SYS_ADMIN_VER_INFO", quit \n" \
-		"\n\t\t windowIndex: default is 0; media : URL/Local file/Playlist; \n" \
-		"\t\t ipaddress/fqdn: default localhost; -d duration: duration for recording; \n", 
+		"\t\t ipaddress/fqdn: default localhost; \n", 
 		  base, base);
 
 	if(!IS_STRING_NULL(apiClientOptionsPrompt(params)))
 	{
 		printf("\n\tOptions parameters for command '%s': '-o %s'\n\n", params->cmd, apiClientOptionsPrompt(params));
 	}
-#endif
+
 	exit(-1);
 }
 
@@ -71,8 +50,9 @@ typedef	struct API_CLIENT_CMD_HANDLER
 
 
 /**************** for play commands ******************/
-static int _playStartValidate(struct API_CLIENT_CMD_HANDLER *handle, struct API_PARAMETERS *params, char *program)
+static int _findCmdValidate(struct API_CLIENT_CMD_HANDLER *handle, struct API_PARAMETERS *params, char *program)
 {
+#if 0
 	if(IS_STRING_NULL(params->media) )
 	{
 		printf("No 'media' for '%s' command\n", params->cmd);
@@ -89,13 +69,19 @@ static int _playStartValidate(struct API_CLIENT_CMD_HANDLER *handle, struct API_
 		printf("WARNS: No 'repeat' of window for the '%s' command\n", params->cmd);
 		params->repeatNumber = 1;
 	}
+#endif
+
+//	snprintf(params->address,  sizeof(params->address), "%s",  "255.255.255.255");//
+	snprintf(params->address,  sizeof(params->address), "%s",  "192.168.168.101");
+	params->protocol = PROTOCOL_UDP;
+	params->port = UDP_SERVER_PORT;
 
 	return EXIT_SUCCESS;
 }
 
-static int _playStartExec(struct API_CLIENT_CMD_HANDLER *handle, struct API_PARAMETERS *params)
+static int _findCmdExec(struct API_CLIENT_CMD_HANDLER *handle, struct API_PARAMETERS *params)
 {
-	params->result = muxApiPlayMediaPlay(params->index, params->media, params->repeatNumber );
+	params->result = muxApiGetParams();
 	return EXIT_SUCCESS;
 }
 
@@ -784,298 +770,36 @@ API_CLIENT_CMD_HANDLER apiClientCmdHandlers[]=
 {
 	/* PLAY commands */
 	{
-		.name = "play",
-		.validate = _playStartValidate,
-		.execute = _playStartExec
+		.name = CLIENT_CMD_STR_FIND,
+		.validate = _findCmdValidate,
+		.execute = _findCmdExec
 	},
 	{
-		.name = "stop",
+		.name = CLIENT_CMD_STR_GET,
 		.validate = _validateIndex,
 		.execute = _playStopExec
 	},
 	{
-		.name = "pause",
+		.name = CLIENT_CMD_STR_SET,
 		.validate = _validateIndex,
 		.execute = _playPauseExec
 	},
 	{
-		.name = "resume",
+		.name = CLIENT_CMD_STR_RS_DATA,
 		.validate = _validateIndex,
 		.execute = _playResumeExec
 	},
 	{
-		.name = "forward",
+		.name = CLIENT_CMD_STR_SECURE,
 		.validate = _validateIndex,
 		.execute = _playForwardExec
 	},
 	{
-		.name = "backward",
+		.name = CLIENT_CMD_STR_BLINK,
 		.validate = _validateIndex,
 		.execute = _playBackforwardExec
 	},
-	{/* 7 */
-		.name = "subtitle",
-		.validate = _validateMedia,
-		.execute = _playSubtitleExec
-	},
-
-	/* RECORD commands */
-	{
-		.name = "recordStart",
-		.validate = _validateRecordStart,
-		.execute = _recordStartExec
-	},
-	{
-		.name = "recordStop",
-		.validate = NULL,
-		.execute = _recordStopExec
-	},
-	{
-		.name = "recordStatus",
-		.validate = NULL,
-		.execute = _recordStatusExec
-	},
-	{
-		.name = "recordPause",
-		.validate = NULL,
-		.execute = _recordPauseExec
-	},
-	{/* 5 */
-		.name = "recordResume",
-		.validate = NULL,
-		.execute = _recordResumeExec
-	},
-
-	/* OSD commands */
-	{
-		.name = "alert",
-		.validate = _validateOsdBanner,
-		.execute = _osdBannerExec
-	},
-	{
-		.name = "logo",
-		.validate = _validateOsdLogo,
-		.execute = _osdLogoExec
-	},
-	{
-		.name = "osdEnable",
-		.validate = _validateOsdEnable,
-		.execute = _osdEnableExec
-	},
 	
-	{
-		.name = "osdBackground",
-		.validate = _validateOsdBackground,
-		.execute = _osdBackgroundExec
-	},
-	{
-		.name = "osdTransparency",
-		.validate = _validateOsdTransparency,
-		.execute = _osdTransparencyExec
-	},
-	{
-		.name = "osdFontColor",
-		.validate = _validateOsdFontcolor,
-		.execute = _osdFontColorExec
-	},	
-	{
-		.name = "osdFontSize",
-		.validate = _validateOsdFontsize,
-		.execute = _osdFontSizeExec
-	},	
-	{/* 7 */
-		.name = "osdPosition",
-		.validate = _validatePosition,
-		.execute = _osdPositionExec
-	},
-	{/* */
-		.name = IPCMD_NAME_OSD_INFO,
-		.validate = _validateOsdEnable,
-		.execute = _osdInfoExec
-	},
-
-	/* WINDOW commands */	
-	{
-		.name = "swapWindow",
-		.validate = _validateIndex,
-		.execute = _windowSwapExec
-	},
-	{
-		.name = "rotateWindow",
-		.validate = _validateIndex,
-		.execute = _windowRotateExec
-	},
-	{/* 3 */
-		.name = "locateWindow",
-		.validate = _validateWindowPosition,
-		.execute = _windowPositionExec
-	},
-
-	{
-		.name = IPCMD_NAME_ASPECT_WINDOW,
-		.validate = _validateWindowAspect,
-		.execute = _windowAspectExec
-	},
-
-	/* MISC PLAY commands */	
-	{
-		.name = "vol+",
-		.validate = _validateIndex,
-		.execute = _miscPlayVolPlusExec
-	},
-	{
-		.name = "vol-",
-		.validate = _validateIndex,
-		.execute = _miscPlayVolMinuxExec
-	},
-	{
-		.name = IPCMD_NAME_PLAYER_AUDIO,
-		.validate = _validateAudio,
-		.execute = _miscPlayAudioExec
-	},
-	{
-		.name = IPCMD_NAME_PLAYER_MUTE,
-		.validate = _validateIndex,
-		.execute = _miscPlayMuteExec
-	},
-	{
-		.name = IPCMD_NAME_PLAYER_MUTE_ALL,
-		.validate = NULL,
-		.execute = _miscPlayMuteAllExec
-	},
-
-	{
-		.name = IPCMD_EDID_RESOLUTION,
-		.validate = _validateMedia,
-		.execute = _edidResolutionExec
-	},
-
-	{
-		.name = IPCMD_EDID_DEEP_COLOR,
-		.validate = _validateEdidColor,
-		.execute = _edidDeepColorExec
-	},
-
-	
-	{
-		.name = "playerInfo",
-		.validate = _validateIndex,
-		.execute = _miscPlayInfoExec
-	},
-	{/* 5 */
-		.name = "mediaInfo",
-		.validate = _validateIndex,
-		.execute = _miscPlayMediaInfoExec
-	},
-	
-	/* MEDIA commands */
-	{
-		.name = "files",
-		.validate = NULL,
-		.execute = _mediaFilesExec
-	},
-	{
-		.name = "playlists",
-		.validate = NULL,
-		.execute = _mediaPlaylistsExec
-	},
-	{
-		.name = "file",
-		.validate = _validateMedia,
-		.execute = _mediaFileExec
-	},
-	{
-		.name = "playlist",
-		.validate = _validateMedia,
-		.execute = _mediaPlaylistExec
-	},
-	{
-		.name = "fileDelete",
-		.validate = _validateMediaFiles,
-		.execute = _mediaFileDeleteExec
-	},
-	{
-		.name = "playlistDelete",
-		.validate = _validateMediaPlaylistDelete,
-		.execute = _mediaPlaylistDeleteExec
-	},
-	{
-		.name = "playlistAdd",
-		.validate = _validateMediaPlaylistAdd,
-		.execute = _mediaPlaylistAddExec
-	},
-
-		
-	{/* 7 */
-		.name = "download",
-		.validate = _validateMediaDownload,
-		.execute = _mediaDownloadExec
-	},
-
-	/* commands for CEC */
-	{
-		.name = IPCMD_CEC_STAND_BY,
-		.validate = NULL,
-		.execute = _clientCecStandbyExec
-	},
-	{
-		.name = IPCMD_CEC_IMAGE_VIEW_ON,
-		.validate = NULL,
-		.execute = _clientCecImageOnExec
-	},
-	{
-		.name = IPCMD_CEC_VOLUME_UP,
-		.validate = NULL,
-		.execute = _clientCecVolumeUpExec
-	},
-	{
-		.name = IPCMD_CEC_VOLUME_DOWN,
-		.validate = NULL,
-		.execute = _clientCecVolumeDownExec
-	},
-	{
-		.name = IPCMD_CEC_MUTE,
-		.validate = NULL,
-		.execute = _clientCecMuteExec
-	},
-	{
-		.name = IPCMD_CEC_INFO,
-		.validate = NULL,
-		.execute = _clientCecInfoExec
-	},
-
-
-	/* commands for SERVER */
-	{
-		.name = CLIENT_CMD_NAME_SVR_CONFIG,
-		.validate = NULL,
-		.execute = _clientSvrConfigExec
-	},
-	{
-		.name = CLIENT_CMD_NAME_SVR_FEEDS,
-		.validate = NULL,
-		.execute = _clientSvrFeedsExec
-	},
-	{
-		.name = CLIENT_CMD_NAME_SVR_CONNS,
-		.validate = NULL,
-		.execute = _clientSvrConnsExec
-	},
-	{
-		.name = CLIENT_CMD_NAME_SVR_URLS,
-		.validate = NULL,
-		.execute = _clientSvrUrlsExec
-	},
-
-	
-	/* commands for WEB */
-	{
-		.name = CLIENT_CMD_NAME_WEB_INFO,
-		.validate = NULL,
-		.execute = _clientWebInfosExec
-	},
-
-
 	/* commands for Sys Admin */
 	{
 		.name = IPCMD_SYS_ADMIN_THREADS,
@@ -1178,7 +902,7 @@ int main(int argc, char *argv[])
 
 	cmn_list_init(&params.files);
 	snprintf(params.address, sizeof(params.address), "%s", "127.0.0.1");
-	params.port = 3600;
+	params.port = UDP_SERVER_PORT;
 	params.protocol = PROTOCOL_TCP;
 	params.index = -1;
 	
@@ -1193,21 +917,21 @@ int main(int argc, char *argv[])
 	{
 		switch (opt)
 		{
-			case 'a':
+			case 'a':/*address*/
 				snprintf(params.address, sizeof(params.address), "%s",optarg);
 				break;
 
-			case 'p':
+			case 'p': /* protocol */
 				params.protocol = atoi(optarg);
 				if(params.protocol >= PROTOCOL_UNKNOWN)
 					params.protocol = PROTOCOL_UDP;
 				break;
 
-			case 'b':
+			case 'b': /* port */
 				params.port = atoi(optarg);
 				break;
 
-			case 'c':
+			case 'c': /* command */
 				snprintf(params.cmd, sizeof(params.cmd), "%s", optarg);
 				break;
 
@@ -1294,7 +1018,7 @@ int main(int argc, char *argv[])
 
 //	res = cmnMuxPlayerParseConfig(MUX_PLAYER_CONFIG_FILE, &_cfg);
 
-	printf(CMN_VERSION_INFO(CMN_MODULE_APICLIENT_NAME));
+	printf(CMN_VERSION_INFO(CMN_MODULE_APICLIENT_NAME EXT_NEW_LINE) );
 
 	if( IS_STRING_NULL(params.cmd) )
 	{
@@ -1323,9 +1047,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		char *printed_json = cJSON_Print(params.result);
-		printf("Command '%s' failed: '%s'\n", params.cmd, printed_json);
-		free(printed_json);
+		MUX_DEBUG_JSON_OBJ(params.result);
 		/* bash script will check it to determine whether go on or not */
 		return 1;
 	}

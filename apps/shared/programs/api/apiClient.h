@@ -98,6 +98,15 @@ typedef	enum
 }CLIENT_CMD_TYPE;
 
 
+#define	CLIENT_CMD_STR_FIND				"find"
+#define	CLIENT_CMD_STR_GET				"get"
+#define	CLIENT_CMD_STR_SET				"set"
+#define	CLIENT_CMD_STR_RS_DATA			"rsData"
+#define	CLIENT_CMD_STR_SECURE			"secure"
+#define	CLIENT_CMD_STR_BLINK				"blink"
+
+
+
 #define	CLIENT_CMD_NAME_SVR_CONFIG				"serviceConfig"
 #define	CLIENT_CMD_NAME_SVR_FEEDS				"serviceFeeds"
 #define	CLIENT_CMD_NAME_SVR_CONNS				"serviceConns"
@@ -113,6 +122,10 @@ struct API_PARAMETERS
 
 	char		cmd[CMN_NAME_LENGTH];
 	int		cmdType;
+
+	char		user[CMN_NAME_LENGTH];
+	char		passwd[CMN_NAME_LENGTH];
+
 	
 	char		media[CMN_NAME_LENGTH];
 	int		repeatNumber;	/* repeat number for this media */

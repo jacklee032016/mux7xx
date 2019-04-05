@@ -14,20 +14,6 @@
       ]
     },
     {
-      "comment": "Commands for RECORDER controlling",
-      "targ": "11:11:11:11:11:11",
-      "cmd": "record_media",
-      "login_ack": "root",
-      "pwd_msg": "123",
-      "data": 
-      [
-      	{
-      		"action": "record",
-      		"objects": ["first"]
-      	}
-      ]
-    },
-    {
       "comment": "Commands for SERVER controlling",
       "targ": "11:11:11:11:11:11",
       "cmd": "server_media",

@@ -1,75 +1,61 @@
 [
-# all managed objects are in array
+# all managed objects are in array; Simplify to send in JSON format directly. 04.02, 2019
       	{
-		    "comment": "Network configuration",
-      		"type": "network",
-      		"objects": 
-      		[
-      			{
+      		"network": 
+   			{
       				"ip": "192.168.168.181",
       				"mask": "255.255.255.0",
       				"gateway": "192.168.168.1",
       				"isDhcp" : 1,
 					"MAC":"02:01:03:04:05:06"
 					
-      			}
-      		]
+   			}
       	},
 		
       	{
-		    "comment": "configuration of media streams",
-      		"type": "media",
-      		"objects":
-      		[
-				{
-					"video": 
-					[
-						{
-							"ip": "239.0.0.100",
-							"port": 36000,
-							"height": 1080,
-							"width": 1920,
-							"fps": "59.94",
-							"colorSpace": "YCbCr-4:2:2",
-							"depth": 16,
-							"Intlce": 1,
-							"array": ["first"]
-						}
-					]	
-				},
+      		"media":
+			{
+				"video": 
+				[
+					{
+						"ip": "239.0.0.100",
+						"port": 36000,
+						"height": 1080,
+						"width": 1920,
+						"fps": "59.94",
+						"colorSpace": "YCbCr-4:2:2",
+						"depth": 16,
+						"Intlce": 1,
+						"array": ["first"]
+					}
+				],
 
-				{
-					"audio": 
-					[
-						{
-							"ip": "239.0.0.101",
-							"port": 36010,
-							"sample": 48000,
-							"channel": 16,
-							"depth": 24,
-							"pktSize": "1ms",
-							"array": ["first"]
-						}
-					]	
-				},
+				"audio": 
+				[
+					{
+						"ip": "239.0.0.101",
+						"port": 36010,
+						"sample": 48000,
+						"channel": 16,
+						"depth": 24,
+						"pktSize": "1ms",
+						"array": ["first"]
+					}
+				],
 				
-				{
-					"aucData": 
-					[
-						{
-							"ip": "239.0.0.101",
-							"port": 36020,
-							"arrayItem": "first"
-						}
-					]	
-				}	
-			]
+				"aucData": 
+				[
+					{
+						"ip": "239.0.0.101",
+						"port": 36020,
+						"arrayItem": "first"
+					}
+				]	
+			}
       	},
 
      	{
-		    "comment": "RS232 configuration",
-      		"type": "rs232",
-      		"objects": 
+      		"rs232": 
       		{
 				"baudrate": 115200,
 				"databit": 8,
@@ -80,10 +66,7 @@
       	},
 		
     	{
-			# any comments, one new line can be comments
-		    "comment": "management of security chip",
-      		"type": "security",
-      		"objects": 
+      		"security": 
       		{
 				"get_id": "ab12",
 				"get_status": 1,
@@ -92,9 +75,7 @@
       	},
 		
       	{
-		    "comment": "System configuration",
-      		"type": "system",
-      		"objects": 
+      		"system": 
       		{
 				"model": "744-TX/RX",
 				"name": "SdiOverIP-774",
@@ -108,5 +89,5 @@
       			"blink_led": 0
       		}
       	}
-      	
- ]
+	
+]

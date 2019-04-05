@@ -57,6 +57,10 @@
 
 #include "cJSON.h"
 
+#if 	MUX_JSON_DEBUG
+#include "libCmn.h"
+#endif
+
 /* define our own boolean type */
 #define true ((cJSON_bool)1)
 #define false ((cJSON_bool)0)
@@ -1110,6 +1114,7 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
     printbuffer buffer[1];
     unsigned char *printed = NULL;
 
+TRACE();
     memset(buffer, 0, sizeof(buffer));
 
     /* create buffer */
@@ -1122,6 +1127,7 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
         goto fail;
     }
 
+TRACE();
     /* print the value */
     if (!print_value(item, buffer))
     {
@@ -1129,6 +1135,7 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
     }
     update_offset(buffer);
 
+TRACE();
     /* check if reallocate is available */
     if (hooks->reallocate != NULL)
     {
@@ -1145,6 +1152,7 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
         {
             goto fail;
         }
+TRACE();
         memcpy(printed, buffer->buffer, cjson_min(buffer->length, buffer->offset + 1));
         printed[buffer->offset] = '\0'; /* just to be sure */
 
@@ -1152,9 +1160,11 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
         hooks->deallocate(buffer->buffer);
     }
 
+TRACE();
     return printed;
 
 fail:
+TRACE();
     if (buffer->buffer != NULL)
     {
         hooks->deallocate(buffer->buffer);
@@ -1169,17 +1179,17 @@ fail:
 }
 
 /* Render a cJSON item/entity/structure to text. */
-CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item)
+char* cJSON_Print(const cJSON *item)
 {
     return (char*)print(item, true, &global_hooks);
 }
 
-CJSON_PUBLIC(char *) cJSON_PrintUnformatted(const cJSON *item)
+char* cJSON_PrintUnformatted(const cJSON *item)
 {
     return (char*)print(item, false, &global_hooks);
 }
 
-CJSON_PUBLIC(char *) cJSON_PrintBuffered(const cJSON *item, int prebuffer, cJSON_bool fmt)
+char* cJSON_PrintBuffered(const cJSON *item, int prebuffer, cJSON_bool fmt)
 {
     printbuffer p = { 0, 0, 0, 0, 0, 0, { 0, 0, 0 } };
 
@@ -1887,7 +1897,11 @@ static cJSON_bool add_item_to_array(cJSON *array, cJSON *item)
         while (child->next)
         {
             child = child->next;
+#if 0// MUX_JSON_DEBUG	
+		TRACE();
+#endif
         }
+	
         suffix_object(child, item);
     }
 

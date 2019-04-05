@@ -2,20 +2,16 @@
 
 int extSystemJsonInit(const cJSON *array)
 {
-	cJSON *c = array->child;
+	cJSON *child = array->child;
 	size_t i = 0;
 
 
-	while(c)
+	while(child)
 	{
-		cJSON *type = cJSON_GetObjectItem(c, "type");
-		if(type)
-		{
-			MUX_DEBUG("JSON %s, %s", type->string, type->valuestring);
-		}
+		MUX_DEBUG("JSON %s, %s", child->string, (child->type == cJSON_String)? child->valuestring:"Othertype");
 		
 		i++;
-		c = c->next;
+		child = child->next;
 	}
 
 
@@ -53,21 +49,35 @@ TRACE();
 
 	{
 		cJSON				*muxSystemJson = NULL;
-		int count = 0;
+		int count = 0, i;
 
 		muxSystemJson = cmnMuxJsonLoadConfiguration(MUX_SYSTEM_CONFIG_FILE);
 		if (muxSystemJson== NULL)
 		{
 			MUX_ERROR("IP Command configuration file '%s' Parsing failed", MUX_SYSTEM_CONFIG_FILE);
-			return NULL;
+			return EXIT_FAILURE;
 		}
+		muxMain->systemJson = muxSystemJson;
 
-
-		count = extSystemJsonInit(muxSystemJson);
-		MUX_DEBUG("Total %d sub functions", count);
+		count = cJSON_GetArraySize(muxSystemJson);
+		MUX_DEBUG("Total %d items", count );
+		for(i=0; i < count; i++ )
+		{
+			cJSON *item = cJSON_GetArrayItem(muxSystemJson, i);
+			cJSON *obj = cJSON_GetArrayItem(item, 0);
+			MUX_DEBUG("#%d: %s", i, obj->string );
+			
+			if(obj)
+			{
+//				MUX_DEBUG("\t#%d: %s:%s", i, type->string, type->valuestring);
+				int _count = extSystemJsonInit(obj);
+				MUX_DEBUG("\tTotal %d sub functions", _count);
+			}
+		}
 	}
 	
 
 	return EXIT_SUCCESS;
 }
+
 

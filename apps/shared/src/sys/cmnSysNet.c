@@ -20,7 +20,7 @@
 #include "libCmn.h"
 #include "mux7xx.h"
 
-#define __IP_DEBUG		0
+#define __IP_DEBUG		1
 
 uint32_t cmnSysNetGetIp(char * hwName)
 {

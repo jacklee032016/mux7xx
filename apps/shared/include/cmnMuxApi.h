@@ -102,6 +102,11 @@ cJSON *_muxApiMediaGenericCmdNoParams( char *ipcmdName, char *action);
 	_muxApiMediaGenericCmdNoParams(IPCMD_NAME_MEDIA_PLAY, IPCMD_CEC_INFO)
 
 
+#define	muxApiGetParams()	\
+	_muxApiMediaGenericCmdNoParams(IPCMD_NAME_GET_PARAM, "empty")
+
+
+
 /* APIs for SERVER */
 #define	muxApiServerConfig()	\
 	_muxApiMediaGenericCmdNoParams(IPCMD_NAME_MEDIA_SERVER, IPCMD_NAME_SERVER_CONFIG)

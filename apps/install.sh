@@ -29,6 +29,7 @@ CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf
 		ipCmds.json mediaActions.json playActions.json 
 		recordActions.json serverActions.json 
 		sysAdminActions.json webActions.json 
+		muxSystem.json 
 		"
 	
 	echo ""
@@ -38,7 +39,15 @@ CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf
 	for cfg in $CONFIG_FILES; do
 		cp $VERBOSE -r $SRCDIR/etc/mLab/$cfg $PKGDIR/etc/mLab
 	done
-#	cp $VERBOSE -r $SRCDIR/etc/mLab/muxWeb.conf $PKGDIR/etc/mLab/muxWeb.conf
+	cp $VERBOSE -r $SRCDIR/etc/apache2	$PKGDIR/etc/
+
+	#	cp $VERBOSE -r $SRCDIR/etc/mLab/muxWeb.conf $PKGDIR/etc/mLab/muxWeb.conf
+
+	echo ""
+
+	echo "   Copy PHP into $PKGDIR..."
+	cp $VERBOSE -r $SRCDIR/var/www/* $PKGDIR/var/www/
+
 
 	echo ""
 	echo "   Copy Library into $PKGDIR..."
@@ -72,6 +81,7 @@ CONFIG_FILES="muxLab.png muxMain.conf muxPlayer.conf muxRecorder.conf
 	done
 
 
+	
 	echo ""
 #	echo "   Copy CGI into $PKGDIR..."
 	EXES=`find $DATDIR/var/www/apis/ -type f `

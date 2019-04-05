@@ -21,15 +21,14 @@ LOCAL_ALL := \
 
 include $(ROOT_DIR)/Makefile.post
 
-LDFLAGS += -L$(BIN_DIR)/lib -lMux -lShared $(LDFLAGS)
 
 ifeq ($(ARCH),arm)
-LDFLAGS += $(HI_LIB_PATHS) 
+LDFLAGS += 
 else
-LDFLAGS += -L$(FFMPEG_HOME)/Linux.bin.$(ARCH)/lib $(FFMPEG_LDFLAGS) -ldl
+LDFLAGS += -LLinux.bin.$(ARCH)/lib -ldl
 endif
 
-LDFLAGS += -lz -lpthread -lm
+LDFLAGS += -L$(BIN_DIR)/lib -lMux -lCmnSys -lShared $(LDFLAGS) -lz -lpthread -lm
 
 
 apiClient:$(OBJS)

@@ -851,7 +851,7 @@ static int	_fileAddOptions(struct API_CLIENT_OPT_HANDLER *handler, char *optarg,
 				else
 				{
 					fprintf(stderr, "'%s'='%s'\n", token[0], value);
-					snprintf(clientParams->media, sizeof(clientParams->media), value);
+					snprintf(clientParams->media, sizeof(clientParams->media), "%s", value);
 				}
 				break;
 				
@@ -867,7 +867,7 @@ static int	_fileAddOptions(struct API_CLIENT_OPT_HANDLER *handler, char *optarg,
 					
 					fprintf(stderr, "'%s'='%s'\n", token[1], value);
 					file = cmn_malloc(strlen(value)+1);
-					snprintf(file, strlen(value)+1, value);
+					snprintf(file, strlen(value)+1, "%s", value);
 					
 					cmn_list_append(&clientParams->files, file);
 				}

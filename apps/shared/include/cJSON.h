@@ -28,6 +28,10 @@ extern "C"
 {
 #endif
 
+
+#define	MUX_JSON_DEBUG		1
+
+
 #if !defined(__WINDOWS__) && (defined(WIN32) || defined(WIN64) || defined(_MSC_VER) || defined(_WIN32))
 #define __WINDOWS__
 #endif

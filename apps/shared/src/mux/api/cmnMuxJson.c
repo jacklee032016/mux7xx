@@ -6,184 +6,6 @@
 
 #include "_cmnMux.h"
 
-
-#define KEY_LEN	(20)
-#define VALUE_LEN (1024)
-
-typedef struct _HASH_MAP
-{
-	const char key[KEY_LEN];
-	char value[VALUE_LEN];
-}HASH_MAP;
-
-
-typedef enum
-{
-	msg_targ,
-	msg_cmd,
-	msg_login_ack,
-	msg_pwd_msg,
-	msg_data,
-	msg_login,
-	msg_password,
-	msg_pName,
-	msg_model,
-	msg_fwVer,
-	msg_cName,
-	msg_mac,
-	msg_ip,
-	msg_mask,
-	msg_gateway,
-	msg_isDhcp,
-	msg_isDipOn,
-	msg_isReset,
-	msg_isReboot,
-	msg_IRState,
-	msg_IRFeedbackIp,
-	msg_RS232Baudrate,
-	msg_RS232Databits,
-	msg_RS232Parity,
-	msg_RS232Stopbits,
-	msg_RS232FeedbackIp,
-	msg_isTS_1,
-	msg_TSurl_1,
-	msg_isHLS_1,
-	msg_HLSurl_1,
-	msg_isFLV_1,
-	msg_FLVurl_1,
-	msg_HTTPport_1,
-	msg_isRTSP_1,
-	msg_RTSPurl_1,
-	msg_RTSPport_1,
-	msg_isRTSPph_1,
-	msg_isRTMP_1,
-	msg_isRTMPph_1,
-	msg_RTMPurl_1,
-	msg_RTMPport_1,
-	msg_isMCAST_1,
-	msg_MCASTip_1,
-	msg_MCASTport_1,
-	msg_MCASTurl_1,
-	msg_SourceIp_1,
-	msg_VidResI_1,
-	msg_VidFpsI_1,
-	msg_VidResO_1,
-	msg_VidFpsO_1,
-	msg_VidBitR_1,
-	msg_VidCodec_1,
-	msg_AudFrq_1,
-	msg_AudBitR_1,
-	msg_AudCodec_1,
-	msg_num
-} RSV_MSG;
-
-#define VER	"1.1.4"
-
-const HASH_MAP _defaultStates[msg_num] =
-{
-		{ "targ", "" },
-		{ "cmd", "set_param" },
-		{ "login_ack", "" },
-		{ "pwd_msg", "" },
-		{ IPCMD_NAME_KEYWORD_DATA, "" },
-		{ "login", "" },
-		{ "password", "" },
-		{ "pName", "AV Over IP H.264 H.265" },
-		{ "model", "RX-500762" },
-		{ "fwVer", VER },
-		{ "cName", "myRXname" },
-		{ "mac", "" },
-		{ "ip", "192.168.168.62" },
-		{ "mask", "255.255.255.0" },
-		{ "gateway", "192.168.168.1" },
-		{ "isDhcp", "1" },
-		{ "isDipOn", "0" },
-		{ "isReset", "0" },
-		{ "isReboot", "0" },
-		{ "IRState", "0" },
-		{ "IRFeedbackIp", "192.168.168.61" },
-		{ "RS232Baudrate", "9600" },
-		{ "RS232Databits", "8" },
-		{ "RS232Parity", "none" },
-		{ "RS232Stopbits", "1" },
-		{ "RS232FeedbackIp", "192.168.168.61" },
-		{ "isTS_1", "0" },
-		{ "TSurl_1", "http://192.168.168.61:80/video1.ts" },
-		{ "isHLS_1", "0" },
-		{ "HLSurl_1", "http://192.168.168.61:80/video1.m3u8" },
-		{ "isFLV_1", "0" },
-		{ "FLVurl_1", "http://192.168.168.61:80/video1.flv" },
-		{ "HTTPport_1", "80" },
-		{ "isRTSP_1", "0" },
-		{ "RTSPurl_1", "rtsp://192.168.168.61:554/video1.rtsp" },
-		{ "RTSPport_1", "38001" },
-		{ "isRTSPph_1", "0" },
-		{ "isRTMP_1", "0" },
-		{ "isRTMPph_1", "0" },
-		{ "RTMPurl_1", "" },
-		{ "RTMPport_1", "1935" },
-		{ "isMCAST_1", "1" },
-		{ "MCASTip_1", "239.100.0.1" },
-		{ "MCASTport_1", "37000" },
-		{ "MCASTurl_1", "udp://@239.100.0.1:37000" },
-		{ "SourceIp_1", "" },
-		{ "VidResI_1", "" },
-		{ "VidFpsI_1", "" },
-		{ "VidResO_1", "" },
-		{ "VidFpsO_1", "" },
-		{ "VidBitR_1", "" },
-		{ "VidCodec_1", "" },
-		{ "AudFrq_1", "" },
-		{ "AudBitR_1", "" },
-		{ "AudCodec_1", "" },
-};
-
-const char DIP_SWITCH[16][15] = {
-		"239.100.0.1",
-		"239.100.0.2",
-		"239.100.0.3",
-		"239.100.0.4",
-		"239.100.0.5",
-		"239.100.0.6",
-		"239.100.0.7",
-		"239.100.0.8",
-		"239.100.0.9",
-		"239.100.0.10",
-		"239.100.0.11",
-		"239.100.0.12",
-		"239.100.0.13",
-		"239.100.0.14",
-		"239.100.0.15",
-		"239.100.0.16"
-};
-
-
-
-cJSON *cmnMuxCreateDefaultJsonObject(void)
-{
-	cJSON *json_root = cJSON_CreateObject();
-	cJSON *item_array = cJSON_CreateArray();
-	cJSON *parameter_pool = cJSON_CreateObject();
-
-//	cJSON *value = cJSON_CreateObject();
-	int i;
-	for (i = 0; i < msg_data; i++)
-	{
-		cJSON_AddItemToObject(json_root, _defaultStates[i].key, cJSON_CreateString(_defaultStates[i].value));
-	}
-
-	cJSON_AddItemToObject(json_root, _defaultStates[msg_data].key, item_array);
-	cJSON_AddItemToObject(item_array, _defaultStates[msg_data].key, parameter_pool);
-
-	for (i = msg_login; i < msg_num; i++)
-	{
-		cJSON_AddItemToObject(parameter_pool, _defaultStates[i].key, cJSON_CreateString(_defaultStates[i].value));
-		//printf("Add to cJSON: %s --- %s\n", _defaultStates[i].key, _defaultStates[i].value);
-	}
-
-	return json_root;
-}
-
 char* cmnGetStrFromJsonObject(cJSON* json, const char * key)
 {
 	cJSON * obj = cJSON_GetObjectItem(json, key);
@@ -205,6 +27,42 @@ int cmnGetIntegerFromJsonObject(cJSON* json, const char * key)
 }
 
 
+int	cmnMuxJsonHandle4GetParams(MUX_PLUGIN_TYPE dest, struct DATA_CONN *dataConn, cJSON *data) /* data is first item in data array */
+{
+	int res = EXIT_SUCCESS;
+
+//	dataConn->resultObject = cJSON_CreateArray();
+	
+	MuxMain *muxMain = SYS_MAIN(dataConn);
+	EXT_RUNTIME_CFG		*runCfg = &muxMain->runCfg;
+
+	SYS_PLAYLIST_LOCK(muxMain);
+
+//	cJSON *objects = cJSON_CreateObject();
+	cJSON *objects = cmnMuxSystemJSon2Flat(muxMain->systemJson);
+
+
+TRACE();
+	SYS_PLAYLIST_UNLOCK(muxMain);
+TRACE();
+//	cJSON_AddItemToArray(dataConn->resultObject, objects);
+	dataConn->resultObject = objects;
+
+TRACE();
+//MUX_DEBUG_JSON_OBJ(dataConn->resultObject);
+
+TRACE();
+	dataConn->errCode = IPCMD_ERR_NOERROR;
+#if 0
+	else
+	{
+		return CMN_CONTROLLER_REPLY_DATA_ERR(dataConn, "Data invalidate: action '%s' is not validate", action);
+	}
+#endif
+
+	return res;
+}
+
 
 /* cmd is command cJSON from client */
 char *cmnMuxCreateErrReply(int errCode, cJSON *cmd)
@@ -217,17 +75,17 @@ char *cmnMuxCreateErrReply(int errCode, cJSON *cmd)
 
 	if(cmd == NULL)
 	{
-		cJSON_AddItemToObject(errReply, _defaultStates[msg_targ].key, cJSON_CreateString("FF:FF:FF:FF:FF:FF"));
-		cJSON_AddItemToObject(errReply, _defaultStates[msg_cmd].key, cJSON_CreateString("Unknown"));
+		cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_TARG, cJSON_CreateString("FF:FF:FF:FF:FF:FF"));
+		cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_CMD, cJSON_CreateString("Unknown"));
 	}
 	else
 	{
-		cJSON_AddItemToObject(errReply, _defaultStates[msg_targ].key, cJSON_CreateString(cmnGetStrFromJsonObject(cmd, _defaultStates[msg_targ].key)));
-		cJSON_AddItemToObject(errReply, _defaultStates[msg_cmd].key, cJSON_CreateString(cmnGetStrFromJsonObject(cmd, _defaultStates[msg_cmd].key)));
+		cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_TARG, cJSON_CreateString(cmnGetStrFromJsonObject(cmd, IPCMD_NAME_KEYWORD_TARG)));
+		cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_CMD, cJSON_CreateString(cmnGetStrFromJsonObject(cmd, IPCMD_NAME_KEYWORD_CMD)));
 	}
-	cJSON_AddItemToObject(errReply, _defaultStates[msg_login_ack].key, cJSON_CreateString("NOK"));
-	cJSON_AddItemToObject(errReply, _defaultStates[msg_pwd_msg].key, cJSON_CreateString( (errStr!=NULL)?errStr:"Unknown Error" ));
-	cJSON_AddItemToObject(errReply, _defaultStates[msg_data].key, arrayItem);
+	cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_LOGIN_ACK, cJSON_CreateString("NOK"));
+	cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_PWD_MSG, cJSON_CreateString( (errStr!=NULL)?errStr:"Unknown Error" ));
+	cJSON_AddItemToObject(errReply, IPCMD_NAME_KEYWORD_DATA, arrayItem);
 	
 	cJSON_AddItemToArray(arrayItem, params);
 	cJSON_AddItemToObject(params, MEDIA_CTRL_STATUS, cJSON_CreateNumber((double) errCode));
@@ -279,12 +137,12 @@ static int	_jsonHandle4SendDataIr(MUX_PLUGIN_TYPE dest, struct DATA_CONN *dataCo
 
 struct json_handler jsonActionHandlers[] =
 {
-#if 0
 	{
 		.name 	= IPCMD_NAME_GET_PARAM,
-		.dest	= MUX_PLUGIN_TYPE_UNKNOWN,
-		.handler	= _jsonHandle4GetParam
+		.dest	= MUX_PLUGIN_TYPE_MAIN,
+		.handler	= cmnMuxJsonHandle4GetParams
 	},
+#if 0
 	{
 		.name 	= IPCMD_NAME_SET_PARAM,
 		.dest	= MUX_PLUGIN_TYPE_UNKNOWN,
@@ -346,42 +204,6 @@ struct json_handler jsonActionHandlers[] =
 };
 
 
-#if 0
-/* get configuration for current command */
-cJSON *cmnMuxGetCurrentCfg(struct DATA_CONN *dataConn)
-{
-	int i;
-	
-	cJSON *cmdObj = cJSON_GetObjectItem(dataConn->cmdObjs, _defaultStates[msg_cmd].key);
-	if(cmdObj == NULL)
-	{
-		MUX_ERROR("No cmd child object is found");
-		return NULL;
-	}
-
-	MUX_DEBUG("cmd is '%s'", cmdObj->valuestring);
-
-	for (i = 0; i < cJSON_GetArraySize(dataConn->ctrlConn->controller->cfgHandlers); i++)
-	{
-		cJSON *subitem = cJSON_GetArrayItem(dataConn->ctrlConn->controller->cfgHandlers, i);
-		if(!subitem)
-		{
-			MUX_ERROR("IP Command configuration file '%s' initialization error", IP_COMMAND_CONFIG_FILE);
-			return NULL;
-		}
-		
-		cJSON *temp = cJSON_GetObjectItem(subitem, _defaultStates[msg_cmd].key);
-		if( !strcasecmp(cmdObj->valuestring, temp->valuestring) )
-		{
-			return temp;
-		}
-	}
-
-	MUX_ERROR("No command configuration for command of '%s'", cmdObj->valuestring);
-	return NULL;
-}
-#endif
-
 cJSON *cmnMuxJsonLoadConfiguration(char *cfgFileName)
 {
 	cJSON *cfgHandlers = NULL;
@@ -418,28 +240,36 @@ static int	_cmnMuxJsonReply4All(struct DATA_CONN *dataConn)
 
 	if(dataConn->errCode == IPCMD_ERR_NOERROR)
 	{
-		cJSON_ReplaceItemInObject(dataConn->cmdObjs, _defaultStates[msg_login_ack].key, cJSON_CreateString("OK"));
-		cJSON_ReplaceItemInObject(dataConn->cmdObjs, _defaultStates[msg_pwd_msg].key, cJSON_CreateString("OK"));
+		cJSON_ReplaceItemInObject(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_LOGIN_ACK, cJSON_CreateString("OK"));
+		cJSON_ReplaceItemInObject(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_PWD_MSG, cJSON_CreateString("OK"));
 	}
 	else
 	{
 		char *errMsg = MUX_JSON_ERROR_STR(dataConn->errCode);
-		cJSON_ReplaceItemInObject(dataConn->cmdObjs, _defaultStates[msg_login_ack].key, cJSON_CreateString("NOK"));
-		cJSON_ReplaceItemInObject(dataConn->cmdObjs, _defaultStates[msg_pwd_msg].key, cJSON_CreateString(errMsg));
+		cJSON_ReplaceItemInObject(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_LOGIN_ACK, cJSON_CreateString("NOK"));
+		cJSON_ReplaceItemInObject(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_PWD_MSG, cJSON_CreateString(errMsg));
 	}
 	
-	dataArray = cJSON_GetObjectItem(dataConn->cmdObjs, _defaultStates[msg_data].key);
+	dataArray = cJSON_GetObjectItem(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_DATA);
 	if(!cJSON_IsArray(dataArray))
 	{
 	}
 	
-	dataItem = cJSON_GetArrayItem(dataArray, 0);
-
 	if( (dataConn->errCode == IPCMD_ERR_NOERROR ||dataConn->errCode == IPCMD_ERR_FTP_PARTLY_FAILED) && dataConn->resultObject != NULL )
 	{
-		cJSON_ReplaceItemInObjectCaseSensitive(dataItem, MEDIA_CTRL_OBJECTS, dataConn->resultObject);
+	TRACE();
+		cJSON_ReplaceItemInArray(dataArray, 0, dataConn->resultObject);
+//		cJSON_ReplaceItemInObjectCaseSensitive(dataItem, MEDIA_CTRL_OBJECTS, dataConn->resultObject);
 	}
 	
+	TRACE();
+	dataItem = cJSON_GetArrayItem(dataArray, 0);
+	if(dataItem == NULL)
+	{
+		MUX_ERROR("No item is array object");
+		return EXIT_FAILURE;
+	}
+
 	cJSON_AddItemToObject(dataItem, MEDIA_CTRL_STATUS, cJSON_CreateNumber((double) dataConn->errCode));
 	if(!IS_STRING_NULL(dataConn->detailedMsg) )
 	{
@@ -447,6 +277,7 @@ static int	_cmnMuxJsonReply4All(struct DATA_CONN *dataConn)
 	}
 
 	char *msg = cJSON_PrintUnformatted(dataConn->cmdObjs);
+//	char *msg = cJSON_PrintUnformatted(dataConn->resultObject);
 
 	res = cmnMuxCtrlResponse(dataConn, msg, strlen(msg));
 	cmn_free(msg);
@@ -577,11 +408,10 @@ int cmnMuxCtrlDataHandle( struct DATA_CONN *dataConn )
 	int res = EXIT_SUCCESS;
 	struct json_handler *_handle = jsonActionHandlers;
 
-	cJSON *cmdObj = cJSON_GetObjectItem(dataConn->cmdObjs, _defaultStates[msg_cmd].key);
+	cJSON *cmdObj = cJSON_GetObjectItem(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_CMD);
 	if(cmdObj == NULL)
 	{
-//		MUX_ERROR("No field of '%s' is found in packet", _defaultStates[msg_cmd].key);
-		return CMN_CONTROLLER_REPLY_DATA_ERR(dataConn, "No field of '%s' is found in packet", _defaultStates[msg_cmd].key );
+		return CMN_CONTROLLER_REPLY_DATA_ERR(dataConn, "No field of '%s' is found in packet", IPCMD_NAME_KEYWORD_CMD );
 	}
 
 	while(_handle->handler )
@@ -603,7 +433,7 @@ int cmnMuxCtrlDataHandle( struct DATA_CONN *dataConn )
 #if MUX_OPTIONS_DEBUG_IP_COMMAND			
 			MUX_DEBUG("IP Command '%s' is processing.....", cmdObj->valuestring);
 #endif
-			cJSON *dataArray = cJSON_GetObjectItem(dataConn->cmdObjs, _defaultStates[msg_data].key);
+			cJSON *dataArray = cJSON_GetObjectItem(dataConn->cmdObjs, IPCMD_NAME_KEYWORD_DATA);
 
 			if(!dataArray || !cJSON_IsArray(dataArray))
 			{
@@ -648,4 +478,42 @@ _ret:
 	return res;
 }
 
+
+cJSON *cmnMuxSystemJSon2Flat(cJSON *systemJson)
+{
+	int count, i;
+	cJSON *flatObj = NULL;
+
+//	flatObj =cJSON_CreateArray();
+	flatObj =cJSON_CreateObject();
+	
+	count = cJSON_GetArraySize(systemJson);
+	MUX_DEBUG("Total %d items", count );
+	
+	for(i=0; i < count; i++ )
+	{
+		cJSON *item = cJSON_GetArrayItem(systemJson, i);
+		cJSON *obj = cJSON_GetArrayItem(item, 0);
+		MUX_DEBUG("#%d: %s", i, obj->string );
+		if(obj)
+		{
+			cJSON *child = obj->child;
+			while(child)
+			{
+				MUX_DEBUG("Add '%s':'%s'", child->string, (child->type == cJSON_String)? child->valuestring:"Othertype");
+
+				cJSON_AddItemToArray(flatObj, cJSON_Duplicate(child, 1));
+				
+			TRACE();
+				child = child->next;
+			}
+
+			TRACE();
+		}
+	}
+
+	MUX_DEBUG_JSON_OBJ(flatObj);
+
+	return flatObj;
+}
 

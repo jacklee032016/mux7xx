@@ -18,7 +18,7 @@
 struct	_cmn_ext_ip_cmd
 {
 	unsigned short		tag;
-	unsigned short		length;
+	unsigned short		length;	/* include CRC 4 bytes */
 	
 	unsigned char			data[EXT_IP_CMD_MAX_LENGTH];	/* it should be 65531 to optimize memory allocation */
 }__attribute__ ((packed));
