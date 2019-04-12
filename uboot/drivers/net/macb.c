@@ -44,6 +44,8 @@
 
 #include "macb.h"
 
+#include "mux7xxCompact.h"
+
 DECLARE_GLOBAL_DATA_PTR;
 
 #define MACB_RX_BUFFER_SIZE		4096
@@ -423,6 +425,8 @@ static int _macb_recv(struct macb_device *macb, uchar **packetp)
 		}
 		barrier();
 	}
+	
+	TRACE();
 }
 
 static void macb_phy_reset(struct macb_device *macb, const char *name)
@@ -459,8 +463,9 @@ static int macb_phy_find(struct macb_device *macb, const char *name)
 	for (i = 0; i < 32; i++) {
 		macb->phy_addr = i;
 		phy_id = macb_mdio_read(macb, MII_PHYSID1);
-		if (phy_id != 0xffff) {
-			printf("%s: PHY present at %d\n", name, i);
+		if (phy_id != 0xffff)
+		{
+			printf("%s: PHY present at %d: PHY_ID:0x%x\n", name, i, phy_id );
 			return 1;
 		}
 	}
@@ -496,6 +501,8 @@ static int macb_phy_init(struct macb_device *macb, const char *name)
 		printf("%s: No PHY present\n", name);
 		return 0;
 	}
+
+	TRACE();
 
 #ifdef CONFIG_PHYLIB
 #ifdef CONFIG_DM_ETH
@@ -561,10 +568,18 @@ static int macb_phy_init(struct macb_device *macb, const char *name)
 	/* fall back for EMAC checking */
 	adv = macb_mdio_read(macb, MII_ADVERTISE);
 	lpa = macb_mdio_read(macb, MII_LPA);
+	EXT_INFOF(("Avertise:0x%x; LPA:0x%x", adv, lpa) );
+	
 	media = mii_nway_result(lpa & adv);
 	speed = (media & (ADVERTISE_100FULL | ADVERTISE_100HALF)
 		 ? 1 : 0);
 	duplex = (media & ADVERTISE_FULL) ? 1 : 0;
+
+	printf("%s: link up, %sMbps %s-duplex (lpa: 0x%04x)\n",
+	       name,
+	       speed ? "100" : "10",
+	       duplex ? "full" : "half",
+	       lpa);
 
 #if 1
 speed=1;
@@ -583,6 +598,7 @@ duplex=1;
 		ncfgr |= MACB_BIT(SPD);
 	if (duplex)
 		ncfgr |= MACB_BIT(FD);
+	
 	macb_writel(macb, NCFGR, ncfgr);
 
 	return 1;
@@ -624,6 +640,7 @@ static int _macb_init(struct macb_device *macb, const char *name)
 	unsigned long paddr;
 	int i;
 
+	TRACE();
 	/*
 	 * macb_halt should have been called at some point before now,
 	 * so we'll assume the controller is idle.
@@ -721,9 +738,13 @@ static int _macb_init(struct macb_device *macb, const char *name)
 #endif
 		return -1;
 
+	extSwitchSetup();	
+
+
 	/* Enable TX and RX */
 	macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE));
 
+	TRACE();
 	return 0;
 }
 
@@ -954,6 +975,7 @@ int macb_eth_initialize(int id, void *regs, unsigned int phy_addr)
 
 static int macb_start(struct udevice *dev)
 {
+	TRACE();
 	return _macb_init(dev, dev->name);
 }
 
@@ -961,6 +983,7 @@ static int macb_send(struct udevice *dev, void *packet, int length)
 {
 	struct macb_device *macb = dev_get_priv(dev);
 
+	TRACE();
 	return _macb_send(macb, dev->name, packet, length);
 }
 
@@ -1040,10 +1063,14 @@ static int macb_eth_probe(struct udevice *dev)
 	const char *phy_mode;
 	int ret;
 
-	phy_mode = fdt_getprop(gd->fdt_blob, dev_of_offset(dev), "phy-mode",
-			       NULL);
+TRACE();
+	phy_mode = fdt_getprop(gd->fdt_blob, dev_of_offset(dev), "phy-mode", NULL);
 	if (phy_mode)
+	{
+		EXT_INFOF(("PHY Mode:%s", phy_mode));
 		macb->phy_interface = phy_get_interface_by_name(phy_mode);
+	}
+	
 	if (macb->phy_interface == -1) {
 		debug("%s: Invalid PHY interface '%s'\n", __func__, phy_mode);
 		return -EINVAL;
@@ -1072,6 +1099,8 @@ static int macb_eth_probe(struct udevice *dev)
 		return ret;
 	macb->bus = miiphy_get_dev_by_name(dev->name);
 #endif
+
+	TRACE();
 
 	return 0;
 }

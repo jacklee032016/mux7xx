@@ -6,3 +6,4 @@
 #
 
 obj-y += mux7xx.o
+obj-y += mux7xxHwInit.o
